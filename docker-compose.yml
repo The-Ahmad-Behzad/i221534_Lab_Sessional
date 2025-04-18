@@ -1,0 +1,89 @@
+version: "3.8"
+services:
+  api-gateway:
+    build:
+      dockerfile: Cafe_Management_System/api-gateway/Dockerfile
+      context: .
+    environment:
+      - MONGO_URL=mongodb://mongodb:27017/cafe
+    volumes:
+      - ./api_gateway_db:/myapp
+    ports:
+      - "8080:3000"
+    depends_on:
+      - customer_services
+      - inventory_services
+      - menu_services
+      - order_services
+      - payment_services
+      - mongo
+  customer_services:
+    build:
+      dockerfile: Cafe_Management_System/customer-services/Dockerfile
+      context: .
+    environment:
+      - MONGO_URL=mongodb://mongodb:27017/cafe
+    volumes:
+      - ./customer_services_db:/myapp
+    ports:
+      - "8083:3000"
+    depends_on:
+      - mongo
+  inventory_services:
+    build:
+      dockerfile: Cafe_Management_System/inventory-services/Dockerfile
+      context: .
+    environment:
+      - MONGO_URL=mongodb://mongodb:27017/cafe
+    volumes:
+      - ./inventory_services_db:/myapp
+    ports:
+      - "8084:3000"
+    depends_on:
+      - mongo
+  menu_services:
+    build:
+      dockerfile: Cafe_Management_System/menu-services/Dockerfile
+      context: .
+    environment:
+      - MONGO_URL=mongodb://mongodb:27017/cafe
+    volumes:
+      - ./menu_services_db:/myapp
+    ports:
+      - "8085:3000"
+    depends_on:
+      - mongo
+  order_services:
+    build:
+      dockerfile: Cafe_Management_System/order-services/Dockerfile
+      context: .
+    environment:
+      - MONGO_URL=mongodb://mongodb:27017/cafe
+    volumes:
+      - ./order_services_db:/myapp
+    ports:
+      - "8086:3000"
+    depends_on:
+      - inventory_services
+      - menu_services
+      - customer_services
+      - mongo
+  payment_services:
+    build:
+      dockerfile: Cafe_Management_System/payment-services/Dockerfile
+      context: .
+    environment:
+      - MONGO_URL=mongodb://mongodb:27017/cafe
+    volumes:
+      - ./payment_services_db:/myapp
+    ports:
+      - "8087:3000"
+    depends_on:
+      - order_services
+      - mongo
+  mongo:
+    image: mongo
+    container_name: mongo
+    ports:
+      - '27018:27017'
+  
